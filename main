@@ -1,5 +1,60 @@
 #!/bin/bash
-# This the main file to run the script
+
+source ./table-manager.sh
+source ./database-manager.sh
+
+BASE_DIR="$(pwd)"
+
+function dbMenu(){
+  local dbname="$1"
+  local db="$BASE_DIR/$dbname"
+  while true; do
+    clear
+    echo "=== Connected to DB: $dbname ==="
+    echo
+    PS3=$'\nChoose an option: '  
+    select opt in "Create Table" "List TAbles" "Drop Table" "Insert into Table" "Select From Table" "Delete From Table" "Update Table" "Disconnect" "Exit"
+    do
+    case $REPLY in
+      1) createTable "$db"; continue; break ;;
+      2) listTables "$db"; continue; break ;;
+      3) dropTables "$db"; continue; break ;;
+      4) insertIntoTable "$db"; continue; break ;;
+      5) selectFromTable "$db"; continue; break ;;
+      6) deleteFromTable "$db"; continue; break ;;
+      7) updateTable "$db"; continue; break ;;
+      8) disconnect "$db"; continue; break ;;
+      9) exit ;;
+      *) echo "Invalid";;
+    esac
+    done
+  done
+}
+
+function mainMenu(){
+  while true; do
+    clear
+    echo "==========================================="
+    echo "          🗄️  Welcome to Bash DBMS          "
+    echo "==========================================="
+    echo "Base folder: $BASE_DIR"
+    echo
+
+    PS3=$'\nChoose an option: '   # prompt shown by select
+    select opt in "Create Database" "List Databases" "Connect To Database" "Drop Database" "Exit"
+    do
+      case $REPLY in   # $REPLY = user’s numeric choice
+        1) createDB;continue; break ;;
+        2) listDB;continue; break ;;
+        3) connectDB;continue; break ;;
+        4) dropDB;continue; break ;;
+        5) echo "DB Exiting."; exit 0 ;;
+        *) echo "Invalid";;
+      esac
+    done
+  done
+}
+
 
 function continue(){ 
 echo ""
@@ -9,4 +64,3 @@ read -n 1 -s -r -p "Press any key to return to menu..."
 source ./database-manager.sh
 
 mainMenu
-
