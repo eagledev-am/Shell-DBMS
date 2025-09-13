@@ -1,14 +1,14 @@
-# Table header 
-product_id:product_name:price:category
+# Table structure
+product_id:product_name:price:category # columns
 
-# Table meta data
+# Table meta data structue 
 PK:product_id
 product_id:int:PK
 product_name:string
 price:int
 category:string
 
-Created files for Table/
+# when we create table this the created file 
 products.table          # Table data file
 metaData_products       # Table metadata file
 
