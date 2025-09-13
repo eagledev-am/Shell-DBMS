@@ -1,0 +1,6 @@
+#!/bin/bash
+# This the main file to run the script
+
+source ./database-manager.sh
+
+
