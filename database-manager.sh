@@ -3,7 +3,6 @@
 BASE_DIR="$(pwd)"
 DELIM='|'
 
-function pause(){ read -r -p "Press Enter to continue..."; }
 
 function mainMenu(){
   while true; do
@@ -13,22 +12,22 @@ function mainMenu(){
     echo "==========================================="
     echo "Base folder: $BASE_DIR"
     echo
-    echo "1) Create Database"
-    echo "2) List Databases"
-    echo "3) Connect To Database"
-    echo "4) Drop Database"
-    echo "5) Exit"
-    read -r -p $'\nChoose an option: ' opt
-    case $opt in
-      1) createDB ;;
-      2) listDB ;;
-      3) connectDB ;;
-      4) dropDB ;;
-      5) echo "Goodbye."; exit 0 ;;
-      *) echo "Invalid"; pause ;;
-    esac
+
+    PS3=$'\nChoose an option: '   # prompt shown by select
+    select opt in "Create Database" "List Databases" "Connect To Database" "Drop Database" "Exit"
+    do
+      case $REPLY in   # $REPLY = user’s numeric choice
+        1) createDB;continue; break ;;
+        2) listDB;continue; break ;;
+        3) connectDB;continue; break ;;
+        4) dropDB;continue; break ;;
+        5) echo "DB Exiting."; exit 0 ;;
+        *) echo "Invalid";;
+      esac
+    done
   done
 }
+
 
 function createDB(){
   read -p "Enter the name for new database: " dbname
@@ -50,16 +49,13 @@ function connectDB(){
   local db="$BASE_DIR/$dbname"
   if [[ ! -d "$db" ]]; then
     echo "No such database!"
-    pause
-    return
   fi
   dbMenu "$dbname"
 }
 
 function listDB(){
   echo "Databases: "
-  ls "$BASE_DIR" 2> /dev/null || echo "(none)"
-  pause
+  ls "$BASE_DIR" 2> /dev/null | grep -vE '\.sh$' || echo "(none)"
 }
 
 function dropDB(){
@@ -67,7 +63,6 @@ function dropDB(){
   local db="$BASE_DIR/$dbname"
   if [[ ! -d "$db" ]]; then
     echo "No such database!"
-    pause
     return
   fi
   read -r -p "Are you sure you want to delete database ${dbname} and all its tables? (Y/N) " opt
@@ -76,7 +71,7 @@ function dropDB(){
   else
     echo "Aborted"
   fi
-  pause
+  
 }
 
 function dbMenu(){
@@ -104,9 +99,9 @@ function dbMenu(){
       6) delete_from_table "$db" ;;
       7) update_table "$db" ;;
       8) break ;;
-      *) echo "Invalid"; pause ;;
+      *) echo "Invalid";;
     esac
   done
 }
 
-mainMenu
+

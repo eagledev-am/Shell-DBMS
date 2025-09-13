@@ -1,6 +1,12 @@
 #!/bin/bash
 # This the main file to run the script
 
+function continue(){ 
+echo ""
+read -n 1 -s -r -p "Press any key to return to menu..."
+}
+
 source ./database-manager.sh
 
+mainMenu
 
