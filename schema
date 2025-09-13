@@ -1,0 +1,14 @@
+# Table header 
+product_id:product_name:price:category
+
+# Table meta data
+PK:product_id
+product_id:int:PK
+product_name:string
+price:int
+category:string
+
+Created files for Table/
+products.table          # Table data file
+metaData_products       # Table metadata file
+
