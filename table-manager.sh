@@ -14,9 +14,7 @@ function colNameAndTypeSelect() {
                 echo "Exiting column definition."
                 return 1
                 ;;
-            *) 
-                echo "Invalid column type."
-                ;;
+            *) echo "Invalid column type." ;;
         esac
     done
     # Export the selected values
@@ -95,10 +93,10 @@ function createTable() {
     fi
 
     # Create the table file with header
-    echo "$columns" > "$db/${tableName}.table"
+    echo "$columns" > "$db/content/${tableName}.table"
 
     # Create the metadata file
-    echo -e "PK:$primary_key\n$metadata" > "$db/metadata_${tableName}"
+    echo -e "PK:$primary_key\n$metadata" > "$db/data/metadata_${tableName}"
 
     echo "Table '$tableName' created successfully!"
     echo "Primary key: $primary_key"
