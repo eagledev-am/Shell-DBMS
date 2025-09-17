@@ -185,15 +185,15 @@ update_fn() {
                 return 0
             fi
 
-            local current_line
-            current_line=$(sed -n "${line_no_to_update}p" "$DATA")
-            local current_pk
-            current_pk=$(echo "$current_line" | cut -d: -f1)
+            # local current_line
+            # current_line=$(sed -n "${line_no_to_update}p" "$DATA")
+            # local current_pk
+            # current_pk=$(echo "$current_line" | cut -d: -f1)
             
-            if [[ "$new_value" == "$current_pk" ]]; then
-                echo "[INFO] No change needed - same value."
-                return 0
-            fi
+            # if [[ "$new_value" == "$current_pk" ]]; then
+            #     echo "[INFO] No change needed - same value."
+            #     return 0
+            # fi
 
             if check_pk "$new_value"; then
                 break
