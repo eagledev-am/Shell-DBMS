@@ -1,21 +1,28 @@
 #!/bin/bash
 
+source ./tableManaging.sh
 
 function skipToNext(){
 read -n 1 -s -r -p "✨ Press any key to continue..."
 }
 
 tableMenu(){
+  list_tables "$1"
+  local db="$1"
   
-  local dbname="$1"
-  local db="$BASE_DIR/$dbname"
+  read -r -p "Table name to connect: " tableName
   
-  read -p "Enter Table name: " tableName
+    if [ -z "$tableName" ] || [[ "$tableName" =~ [^a-zA-Z0-9_] ]]; then
+        echo -e ${RED}
+        echo "====Invalid table name====="
+        echo -e ${CYAN}
+        return
+    fi
   
-  local tablePath = "$BASE_DIR/$dbname/data/$tableName"
-  local metaDataPath= "$BASE_DIR/$dbname/metadata/$tableName"
+  local tablePath = "$BASE_DIR/$dbname/tables/$tableName"
+  local metaDataPath= "$BASE_DIR/$dbname/metadata/$tableName.meta"
   
-  if [ ! -f $tablePath ]; then
+  if [ ! -f $tablePath || ! -f $metaDataPath]; then
     echo "Table not exist"
   fi
   
@@ -23,7 +30,7 @@ tableMenu(){
     screenHeader
     echo "===  DB : $dbname ==="
     echo "========================="
-    echo " Table  :  		$tableName  " 
+    echo " Table  :  $tableName  " 
     echo "========================="
     echo
     PS3=$'\nChoose an option: '  
@@ -34,7 +41,7 @@ tableMenu(){
       2) listTables "$tablePath" "$metaDataPath"; skipToNext; break ;;
       3) dropTables "$tablePath" "$metaDataPath"; skipToNext; break ;;
       4) updateTables "$tablePath" "$metaDataPath"; skipToNext; break ;;
-      5) dbMenu;; 
+      5) dbMenu $dbname;; 
       6) exit ;;
       *) echo "Invalid";;
     esac
@@ -43,7 +50,6 @@ tableMenu(){
 }
 
 function dbMenu(){
-
   local dbname="$1"
   local db="$BASE_DIR/$dbname"
   
@@ -55,9 +61,9 @@ function dbMenu(){
     select opt in "Create Table" "List Tables" "Drop Table" "Select Table" "back" "exit"
     do
     case $REPLY in
-      1) createTable "$db"; skipToNext; break ;;
-      2) listTables "$db"; skipToNext; break ;;
-      3) dropTables "$db"; skipToNext; break ;;
+      1) add_table "$db"; skipToNext; break ;;
+      2) list_tables "$db"; skipToNext; break ;;
+      3) drop_table "$db"; skipToNext; break ;;
       4) tableMenu "$db"; skipToNext; break ;;
       5) mainMenu; skipToNext; break ;;
       6) exit  ;;
@@ -72,7 +78,7 @@ function dbMenu(){
 function mainMenu(){
   while true; do
     screenHeader
-    PS3=$'\nChoose an option: '   # prompt shown by select
+    PS3=$'\nChoose an option: '  
     select opt in "Create Database" "List Databases" "Connect To Database" "Drop Database" "Exit"
     do
       case $REPLY in   # $REPLY = user’s numeric choice

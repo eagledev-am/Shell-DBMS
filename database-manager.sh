@@ -30,7 +30,7 @@ function createDB(){
         echo "=====Database name already exists====="
         echo -e "${CYAN}"    
     else
-        mkdir -p "$db" "$db/data" "$db/content"
+        mkdir -p "$db" "$db/tables" "$db/metadata"
         echo -e "${GREEN}"
         echo "=====Database ${dbname} created successfully====="
         echo
