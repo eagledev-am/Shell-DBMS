@@ -44,7 +44,6 @@ display_rows() {
         headers+=("$name")
     done < "$META"
 
-
     printf "%-5s" "Line"
     for h in "${headers[@]}"; do
         printf "| %-12s" "$h"
@@ -69,6 +68,7 @@ display_rows() {
 
 select_menu() {
     local cols=()
+
     while IFS=: read -r name type; do
         cols+=("$name")
     done < "$META"
@@ -90,5 +90,4 @@ select_menu() {
 
     echo "$choice $col $val"
 }
-
 

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# File paths
+# META="table.meta"
+# DATA="table.data"
 
 check_pk() {
     local value="$1"
@@ -8,6 +11,7 @@ check_pk() {
         echo "Can't Insert this value as it's duplicated"
         return 1
     else
+        #echo "Unique"
         return 0
     fi
 }
@@ -20,6 +24,7 @@ check_type() {
 
     
     col_type=$(grep "^$column:" "$META" | cut -d':' -f2)
+
 
     case "$col_type" in
         int)
@@ -38,10 +43,6 @@ check_type() {
                 return 1
             fi
             ;;
-        #*)
-        #    echo "[check_type] Unknown type '$col_type' for column '$column'"
-        #    return 1
-        #    ;;
     esac
 }
 
@@ -65,7 +66,7 @@ delete() {
     echo "[DELETE]"
 
     local res
-    res=$(select_menu)  
+    res=$(select_menu)
     local col="${res%%|*}"
     local val="${res##*|}"
 
@@ -81,7 +82,7 @@ delete() {
         display_rows "${rows[@]}"
         read -p "Confirm delete? (y/n): " ans
         if [[ "$ans" == "y" ]]; then
-            local line_no="${rows[0]%%:*}" 
+            local line_no="${rows[0]%%:*}"  
             remove_row "$line_no"
         else
             echo "[DELETE] Cancelled."
@@ -106,9 +107,9 @@ update_row() {
     local new_val=$3
     local tmpf=$DATA+'.tmp'
 
-    sudo awk -F: -v line="$line_num" -v field="$field_num" -v val="$new_val" '
+    awk -F: -v line="$line_num" -v field="$field_num" -v val="$new_val" '
     BEGIN { OFS=FS }
     NR == line { $field = val }
     { print }
-    ' $DATA > $tmpf && sudo mv $tmpf $DATA
+    ' $DATA > $tmpf && mv $tmpf $DATA
 }

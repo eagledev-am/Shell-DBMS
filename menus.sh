@@ -37,7 +37,7 @@ tableMenu(){
     select opt in "Insert into Table" "Select From Table" "Delete From Table" "Update Table" "Disconnect" "Exit"
     do
       case $REPLY in
-        1) instert_table; skipToNext; break ;;
+        1) insert_fn; skipToNext; break ;;
         2) select_fn; skipToNext; break ;;
         3) delete_fn; skipToNext; break ;;
         4) update_fn; skipToNext; break ;;
