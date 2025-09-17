@@ -5,7 +5,6 @@ read -n 1 -s -r -p "✨ Press any key to continue..."
 }
 
 tableMenu(){
-  echo "table "
   list_tables "$1"
   local db="$1"
 
@@ -21,9 +20,8 @@ tableMenu(){
   
    DATA="$db/tables/$tableName"
    META="$db/metadata/$tableName.meta"
-   
-   
-  if [ ! -f $tablePath || ! -f $metaDataPath]; then
+
+  if [ ! -f $DATA || ! -f $META]; then
     echo "Table not exist"
   fi
   
@@ -38,15 +36,15 @@ tableMenu(){
     PS3=$'\nChoose an option: '  
     select opt in "Insert into Table" "Select From Table" "Delete From Table" "Update Table" "Disconnect" "Exit"
     do
-    case $REPLY in
-      1) instert_table; skipToNext; break ;;
-      2) select_fn; skipToNext; break ;;
-      3) delete_fn; skipToNext; break ;;
-      4) update_fn; skipToNext; break ;;
-      5) dbMenu $dbname;; 
-      6) exit ;;
-      *) echo "Invalid";;
-    esac
+      case $REPLY in
+        1) instert_table; skipToNext; break ;;
+        2) select_fn; skipToNext; break ;;
+        3) delete_fn; skipToNext; break ;;
+        4) update_fn; skipToNext; break ;;
+        5) dbMenu $dbname;; 
+        6) exit ;;
+        *) echo "Invalid";;
+      esac
     done
   done
 }

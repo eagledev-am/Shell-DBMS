@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# File paths
-#META="table.meta"
-#DATA="table.data"
 
 check_pk() {
     local value="$1"
@@ -11,7 +8,6 @@ check_pk() {
         echo "Can't Insert this value as it's duplicated"
         return 1
     else
-        #echo "Unique"
         return 0
     fi
 }
@@ -24,11 +20,6 @@ check_type() {
 
     
     col_type=$(grep "^$column:" "$META" | cut -d':' -f2)
-
-    #if [ -z "$col_type" ]; then
-    #    echo "[check_type] Error: column '$column' not found in schema."
-    #	   return 1
-    #fi
 
     case "$col_type" in
         int)
@@ -61,13 +52,11 @@ remove_row() {
         return 1
     fi
 
-    # Safety check: line number must be an integer
     if ! [[ "$line_no" =~ ^[0-9]+$ ]]; then
         echo "[remove_row] Error: '$line_no' is not a valid number"
         return 1
     fi
 
-    # Perform removal in place
     sed -i "${line_no}d" "$DATA"
     echo "[remove_row] Removed line $line_no from $DATA"
 }
@@ -75,16 +64,13 @@ remove_row() {
 delete() {
     echo "[DELETE]"
 
-    # Step 1: ask user for search condition
     local res
-    res=$(select_menu)  # should return "col|val"
+    res=$(select_menu)  
     local col="${res%%|*}"
     local val="${res##*|}"
 
-    # Step 2: search rows
     mapfile -t rows < <(select_row "$col" "$val")
 
-    # Step 3: handle cases
     if [[ ${#rows[@]} -eq 0 ]]; then
         echo "[DELETE] No rows match '$col=$val'. Aborting."
         return 1
@@ -95,7 +81,7 @@ delete() {
         display_rows "${rows[@]}"
         read -p "Confirm delete? (y/n): " ans
         if [[ "$ans" == "y" ]]; then
-            local line_no="${rows[0]%%:*}"   # assuming select_row returns "line_no:data"
+            local line_no="${rows[0]%%:*}" 
             remove_row "$line_no"
         else
             echo "[DELETE] Cancelled."
@@ -103,7 +89,6 @@ delete() {
         return 0
     fi
 
-    # Step 4: multiple rows found
     echo "[DELETE] Multiple rows found:"
     display_rows "${rows[@]}"
 
