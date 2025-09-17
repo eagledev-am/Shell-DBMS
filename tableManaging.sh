@@ -65,7 +65,7 @@ function add_table() {
         touch "$WDB/tables/$tableName"
 
         # Add header row based on meta
-        awk -F: '{print $1}' "$WDB/metadata/$tableName.meta" | paste -sd':' - >> "$WDB/tables/$tableName"
+        # awk -F: '{print $1}' "$WDB/metadata/$tableName.meta" | paste -sd':' - >> "$WDB/tables/$tableName"
         echo -e "${GREEN}"
         echo "=====Table '$tableName' created successfully with $col columns====="
         echo -e "${CYAN}"
@@ -105,7 +105,7 @@ function drop_table() {
             fi
             break
         else
-            echo "${RED}"
+            echo -e "${RED}"
             echo "=====The $tableName table doesn't exist.====="
             echo -e "${CYAN}"
             continue

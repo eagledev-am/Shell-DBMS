@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source ./selecthelpers.sh
+source ./helpers.sh
+source ./big_functions.sh
 source ./tableManaging.sh
 source ./menus.sh
 source ./database-manager.sh
@@ -10,6 +13,7 @@ BASE_DIR="$(pwd)/databases"
 if [ ! -d "$BASE_DIR" ]; then
   mkdir "$BASE_DIR"
 fi  
+
 
 introScreen
 

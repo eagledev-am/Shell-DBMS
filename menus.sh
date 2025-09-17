@@ -1,15 +1,14 @@
 #!/bin/bash
 
-source ./tableManaging.sh
-
 function skipToNext(){
 read -n 1 -s -r -p "✨ Press any key to continue..."
 }
 
 tableMenu(){
+  echo "table "
   list_tables "$1"
   local db="$1"
-  
+
   read -r -p "Table name to connect: " tableName
   
     if [ -z "$tableName" ] || [[ "$tableName" =~ [^a-zA-Z0-9_] ]]; then
@@ -19,15 +18,18 @@ tableMenu(){
         return
     fi
   
-  local tablePath = "$BASE_DIR/$dbname/tables/$tableName"
-  local metaDataPath= "$BASE_DIR/$dbname/metadata/$tableName.meta"
   
+   DATA="$db/tables/$tableName"
+   META="$db/metadata/$tableName.meta"
+   
+   
   if [ ! -f $tablePath || ! -f $metaDataPath]; then
     echo "Table not exist"
   fi
   
   while true; do
     screenHeader
+
     echo "===  DB : $dbname ==="
     echo "========================="
     echo " Table  :  $tableName  " 
@@ -37,10 +39,10 @@ tableMenu(){
     select opt in "Insert into Table" "Select From Table" "Delete From Table" "Update Table" "Disconnect" "Exit"
     do
     case $REPLY in
-      1) createTable "$tablePath" "$metaDataPath"; skipToNext; break ;;
-      2) listTables "$tablePath" "$metaDataPath"; skipToNext; break ;;
-      3) dropTables "$tablePath" "$metaDataPath"; skipToNext; break ;;
-      4) updateTables "$tablePath" "$metaDataPath"; skipToNext; break ;;
+      1) instert_table; skipToNext; break ;;
+      2) select_fn; skipToNext; break ;;
+      3) delete_fn; skipToNext; break ;;
+      4) update_fn; skipToNext; break ;;
       5) dbMenu $dbname;; 
       6) exit ;;
       *) echo "Invalid";;
