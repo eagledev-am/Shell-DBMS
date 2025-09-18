@@ -34,6 +34,7 @@ tableMenu() {
     echo "========================="
     echo
 
+    
     PS3=$'\nChoose an option: '  
     select opt in "Insert into Table" "Select From Table" "Delete From Table" "Update Table" "Disconnect" "Exit"; do
       case $REPLY in

@@ -62,45 +62,6 @@ remove_row() {
     echo "[remove_row] Removed line $line_no from $DATA"
 }
 
-# delete() {
-#     echo "[DELETE]"
-
-#     local res
-#     res=$(select_menu)
-#     local col="${res%%|*}"
-#     local val="${res##*|}"
-
-#     mapfile -t rows < <(select_row "$col" "$val")
-
-#     if [[ ${#rows[@]} -eq 0 ]]; then
-#         echo "[DELETE] No rows match '$col=$val'. Aborting."
-#         return 1
-#     fi
-
-#     if [[ ${#rows[@]} -eq 1 ]]; then
-#         echo "[DELETE] Found one row:"
-#         display_rows "${rows[@]}"
-#         read -p "Confirm delete? (y/n): " ans
-#         if [[ "$ans" == "y" ]]; then
-#             local line_no="${rows[0]%%:*}"  
-#             remove_row "$line_no"
-#         else
-#             echo "[DELETE] Cancelled."
-#         fi
-#         return 0
-#     fi
-
-#     echo "[DELETE] Multiple rows found:"
-#     display_rows "${rows[@]}"
-
-#     read -p "Enter line number to delete: " line_no
-#     if [[ -n "$line_no" ]]; then
-#         remove_row "$line_no"
-#     else
-#         echo "[DELETE] Cancelled."
-#     fi
-# }
-
 update_row() {
     local line_num=$1
     local field_num=$2
