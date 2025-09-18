@@ -4,25 +4,25 @@ function skipToNext(){
 read -n 1 -s -r -p "✨ Press any key to continue..."
 }
 
-tableMenu(){
+tableMenu() {
   list_tables "$1"
   local db="$1"
 
   read -r -p "Table name to connect: " tableName
   
-    if [ -z "$tableName" ] || [[ "$tableName" =~ [^a-zA-Z0-9_] ]]; then
-        echo -e ${RED}
-        echo "====Invalid table name====="
-        echo -e ${CYAN}
-        return
-    fi
+  if [ -z "$tableName" ] || [[ "$tableName" =~ [^a-zA-Z0-9_] ]]; then
+      echo -e "${RED}"
+      echo "====Invalid table name====="
+      echo -e "${CYAN}"
+      return
+  fi
   
-  
-   DATA="$db/tables/$tableName"
-   META="$db/metadata/$tableName.meta"
+  DATA="$db/tables/$tableName"
+  META="$db/metadata/$tableName.meta"
 
-  if [ ! -f $DATA || ! -f $META]; then
+  if [ ! -f "$DATA" ] || [ ! -f "$META" ]; then
     echo "Table not exist"
+    return
   fi
   
   while true; do
@@ -33,21 +33,22 @@ tableMenu(){
     echo " Table  :  $tableName  " 
     echo "========================="
     echo
+
     PS3=$'\nChoose an option: '  
-    select opt in "Insert into Table" "Select From Table" "Delete From Table" "Update Table" "Disconnect" "Exit"
-    do
+    select opt in "Insert into Table" "Select From Table" "Delete From Table" "Update Table" "Disconnect" "Exit"; do
       case $REPLY in
         1) insert_fn; skipToNext; break ;;
         2) select_fn; skipToNext; break ;;
         3) delete_fn; skipToNext; break ;;
         4) update_fn; skipToNext; break ;;
-        5) dbMenu $dbname;; 
+        5) dbMenu "$dbname"; break ;;
         6) exit ;;
         *) echo "Invalid";;
       esac
     done
   done
 }
+
 
 function dbMenu(){
   local dbname="$1"
