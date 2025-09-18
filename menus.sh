@@ -10,7 +10,7 @@ tableMenu() {
 
   read -r -p "Table name to connect: " tableName
   
-  if [ -z "$tableName" ] || [[ "$tableName" =~ [^a-zA-Z0-9_] ]]; then
+  if  ! validate_name "$tableName"; then
       echo -e "${RED}"
       echo "====Invalid table name====="
       echo -e "${CYAN}"
@@ -82,7 +82,7 @@ function mainMenu(){
     PS3=$'\nChoose an option: '  
     select opt in "Create Database" "List Databases" "Connect To Database" "Drop Database" "Exit"
     do
-      case $REPLY in   # $REPLY = user’s numeric choice
+      case $REPLY in 
         1) createDB; skipToNext; break ;;
         2) listDB; skipToNext; break ;;
         3) connectDB; skipToNext; break ;;

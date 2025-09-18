@@ -1,11 +1,10 @@
 #!/bin/bash
 
 
-function validate_name() {
+validate_name() {
     local name="$1"
-    # optional label: "Table" or "Column"
-    if [ -z "$name" ] || [[ "$name" =~ [^a-zA-Z0-9_] ]]; then
-        echo "Invalid name: $name (only letters, digits, and underscores allowed)"
+    if [ -z "$name" ] || [[ "$name" =~ [^a-zA-Z0-9_] ]] || [[ "$name" =~ ^[0-9] ]]; then
+        echo "Invalid name: $name (must start with a letter/underscore and contain only letters, digits, and underscores)"
         return 1
     fi
     return 0
@@ -16,10 +15,10 @@ function add_table() {
     while true; do
         read -p "Enter table name: " tableName
         
-        # Validate table name
-        if ! validate_name "$tableName" "Table"; then
+        if ! validate_name "$tableName"; then
             continue
         fi
+
         
         if [ -f "$WDB/tables/$tableName" ] || [ -f "$WDB/metadata/$tableName.meta" ]; then
             echo -e "${RED}"
@@ -35,7 +34,6 @@ function add_table() {
         while (( counter <= col )); do
             read -p "Enter name for column $counter: " colName
             
-            # Validate column name
             if ! validate_name "$colName" "Column"; then
                 continue
             fi

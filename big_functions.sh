@@ -157,23 +157,24 @@ update_fn() {
         echo "$((i+1)). ${cols[$i]}"
     done
     
-    local update_choice
+    local upd_col_no
     while true; do
-        read -p "Enter choice [1-${#cols[@]}]: " update_choice
-        if [[ "$update_choice" =~ ^[0-9]+$ ]] && ((update_choice >= 1 && update_choice <= ${#cols[@]})); then
+        read -p "Enter choice [1-${#cols[@]}]: " upd_col_no
+        if [[ "$upd_col_no" =~ ^[0-9]+$ ]] && ((upd_col_no >= 1 && upd_col_no <= ${#cols[@]})); then
             break
         else
             echo "[ERROR] Invalid choice. Please enter a number between 1 and ${#cols[@]}."
         fi
     done
     
-    local update_col="${cols[$((update_choice-1))]}"
+    local upd_col_name
+    upd_col_name=$(awk -F: -v n="$upd_col_no" 'NR==n {print $1}' "$META")
 
     local new_value=""
     
-    if [[ "$update_choice" == "1" ]]; then
+    if [[ "$upd_col_no" == "1" ]]; then
         while true; do
-            read -p "Enter a new value for column '$update_col' (or type 'exit' to cancel): " new_value
+            read -p "Enter a new value for column '$upd_col_name' (or type 'exit' to cancel): " new_value
 
             if [[ -z "$new_value" ]]; then
                 echo "[ERROR] Please enter a value or 'exit' to cancel."
@@ -184,16 +185,6 @@ update_fn() {
                 echo "[INFO] Update cancelled by user."
                 return 0
             fi
-
-            # local current_line
-            # current_line=$(sed -n "${line_no_to_update}p" "$DATA")
-            # local current_pk
-            # current_pk=$(echo "$current_line" | cut -d: -f1)
-            
-            # if [[ "$new_value" == "$current_pk" ]]; then
-            #     echo "[INFO] No change needed - same value."
-            #     return 0
-            # fi
 
             if check_pk "$new_value"; then
                 break
@@ -203,7 +194,7 @@ update_fn() {
         done
     else
         while true; do
-            read -p "Enter a value for column '$update_col' (or type 'exit' to cancel): " new_value
+            read -p "Enter a value for column '$upd_col_name' (or type 'exit' to cancel): " new_value
 
             if [[ -z "$new_value" ]]; then
                 echo "[ERROR] Please enter a value or 'exit' to cancel."
@@ -215,16 +206,16 @@ update_fn() {
                 return 0
             fi
 
-            if check_type "$new_value" "$update_col"; then
+            if check_type "$new_value" "$upd_col_name"; then
                 break
             else
-                echo "[ERROR] Invalid type for value '$new_value' in column '$update_col'. Please enter a valid value."
+                echo "[ERROR] Invalid type for value '$new_value' in column '$upd_col_name'. Please enter a valid value."
             fi
         done
     fi
 
-    echo "[INFO] Updating line $line_no_to_update: setting $update_col = $new_value"
-    update_row "$line_no_to_update" "$update_choice" "$new_value"
+    echo "[INFO] Updating line $line_no_to_update: setting $upd_col_name = $new_value"
+    update_row "$line_no_to_update" "$upd_col_no" "$new_value"
     echo "[INFO] Row $line_no_to_update updated successfully."
 }
 
@@ -291,7 +282,6 @@ insert_fn() {
                     fi
                 fi
                 
-                # Check data type 
                 if [[ -n "$value" ]]; then
                     if check_type "$value" "$col_name"; then
                         break
