@@ -107,81 +107,53 @@ update_fn() {
     mapfile -t rows_array <<< "$rows"
     display_rows "${rows_array[@]}"
 
+    num_matches=$(echo "$rows" | wc -l)
+
     local line_no_to_update=""
 
-    if (( ${#rows_array[@]} > 1 )); then
-        echo "[INFO] Multiple records found."
-        
+    if (( num_matches > 1 )); then
         while true; do
-            read -p "Enter the line number you want to update (or 'exit' to cancel): " line_no_to_update
-            
-            if [[ "$line_no_to_update" == "exit" ]]; then
-                echo "[INFO] Update cancelled"
-                return 0
-            fi
-            
-            if [[ -z "$line_no_to_update" ]]; then
-                echo "[ERROR] Please enter a line number or 'exit' to cancel."
-                continue
-            fi
-
-            break
-
-            local found=false
-            for entry in "${rows_array[@]}"; do
-                local line_no="${entry%%:*}"
-                if [[ "$line_no" == "$line_no_to_update" ]]; then
-                    found=true
-                    break
-                fi
-            done
-
-            if [[ $found == true ]]; then
+            read -p "Enter line number to update: " line_no_to_update
+            if grep -q "^$line_no_to_update:" <<< "$rows"; then
                 break
             else
-                echo "[ERROR] Invalid line number. Please choose from the displayed lines."
+                echo "[ERROR] Invalid line number."
             fi
         done
     else
-        line_no_to_update="${rows_array[0]%%:*}"
+        line_no_to_update=$(echo "$rows" | head -n1 | cut -d: -f1)
     fi
 
     while true; do
         read -p "Update this record (line $line_no_to_update)? (y/n): " confirm
         
-        if [[ -z "$confirm" ]]; then
-            echo "[ERROR] Please enter 'y' for yes or 'n' for no."
-            continue
-        fi
         
-        if [[ "$confirm" == "y" ]]; then
+        if [[ "$confirm" == "y" || "$confirm" == "Y" || -z "$confirm" ]]; then
             break
-        elif [[ "$confirm" == "n" ]]; then
+        elif [[ "$confirm" == "n" || "$confirm" == "N" ]]; then
             echo "[INFO] Update cancelled"
             return 0
         else
-            echo "[ERROR] Please enter 'y' for yes or 'n' for no."
+            echo "[ERROR] Please enter 'y' or 'n'."
         fi
+
     done
 
     echo "[INFO] Choose column to update:"
     
-    local cols=()
-    while IFS=: read -r name type; do
-        cols+=("$name")
-    done < "$META"
+    num_cols=$(awk 'END{print NR}' "$META")
+
     
-    for i in "${!cols[@]}"; do
-        echo "$((i+1)). ${cols[$i]}"
-    done
+    awk -F: '{print NR ". " $1}' "$META"
+
     
     local upd_col_no
     while true; do
-        read -p "Enter choice [1-${#cols[@]}]: " upd_col_no
-        if [[ "$upd_col_no" =~ ^[0-9]+$ ]] && ((upd_col_no >= 1 && upd_col_no <= ${#cols[@]})); then
+        read -p "Enter choice [1-$num_cols]: " upd_col_no
+        if [[ "$upd_col_no" =~ ^[0-9]+$ ]] && ((upd_col_no >= 1 && upd_col_no <= num_cols)); then
             break
         else
-            echo "[ERROR] Invalid choice. Please enter a number between 1 and ${#cols[@]}."
+            echo "[ERROR] Invalid choice. Please enter a number between 1 and $num_cols}."
         fi
     done
     
@@ -240,23 +212,16 @@ update_fn() {
 insert_fn() {
     echo "[INSERT] Adding new record"
     
-    local cols=()
-    local types=()
-    
-    while IFS=: read -r name type; do
-        cols+=("$name")
-        types+=("$type")
-    done < "$META"
+    cols=($(cut -d: -f1 "$META"))
+    types=($(cut -d: -f2 "$META"))
+
     
     if [[ ${#cols[@]} -eq 0 ]]; then
         echo "[ERROR] No schema found in $META"
         return 1
-    fi
+    fi    
     
-    echo "Schema loaded: ${#cols[@]} columns"
-    
-    local new_row_values=()
-    
+    local row_string=""
     for i in "${!cols[@]}"; do
         local col_name="${cols[$i]}"
         local col_type="${types[$i]}"
@@ -293,7 +258,7 @@ insert_fn() {
                 
                 if [[ -z "$value" ]]; then
                     read -p "Value is empty. Continue with empty value? (y/n): " confirm
-                    if [[ "$confirm" == "y" ]]; then
+                    if [[ "$confirm" == "y" || "$confirm" == "Y" || -z "$confirm" ]]; then
                         break
                     else
                         continue
@@ -312,37 +277,28 @@ insert_fn() {
             done
         fi
         
-        new_row_values+=("$value")
+        if [[ -z "$row_string" ]]; then # zay el hashmap keda
+            row_string="$value"
+        else
+            row_string="${row_string}:$value"
+        fi
     done
     
     echo ""
-    echo "New record to be inserted:"
-    echo "-------------------------"
-    for i in "${!cols[@]}"; do
-        printf "%-12s: %s\n" "${cols[$i]}" "${new_row_values[$i]}"
-    done
+    echo "New record to be inserted: $row_string"
     echo "-------------------------"
     
     # Confirm
     while true; do
         read -p "Insert this record? (y/n): " confirm
         
-        if [[ "$confirm" == "y" ]]; then
-            local row_string=""
-            for i in "${!new_row_values[@]}"; do
-                if [[ $i -eq 0 ]]; then
-                    row_string="${new_row_values[$i]}"
-                else
-                    row_string="${row_string}:${new_row_values[$i]}"
-                fi
-            done
-            
+        if [[ "$confirm" == "y" || "$confirm" == "Y" || -z "$confirm" ]]; then
             # Append to data file
             echo "$row_string" >> "$DATA"
             echo "[INFO] Record inserted successfully!"
             return 0
             
-        elif [[ "$confirm" == "n" ]]; then
+        elif [[ "$confirm" == "n" || "$confirm" == "N" ]]; then
             echo "[INFO] Insert cancelled."
             return 0
         else

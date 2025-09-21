@@ -1,33 +1,20 @@
 #!/bin/bash
 
-
 select_row() {
     local col="$1"
     local val="$2"
 
-    local col_index=0
-    local found=0
-    while IFS=: read -r name type; do
-        col_index=$((col_index+1))
-        if [[ "$name" == "$col" ]]; then
-            found=1
-            break
-        fi
-    done < "$META"
+    local col_num
+    col_num=$(grep -n "^$col:" "$META" | cut -d: -f1)
 
-    if [[ $found -eq 0 ]]; then
-        echo "[ERROR] Column '$col' not found in schema"
+    if [[ -z "$col_num" ]]; then
+        echo "[ERROR] Column '$col' not found in schema" >&2
         return 1
     fi
 
-    local line_no=0
-    while IFS= read -r line; do
-        line_no=$((line_no+1))
-        IFS=: read -ra fields <<< "$line"
-        if [[ "${fields[$((col_index-1))]}" == "$val" ]]; then
-            echo "$line_no:$line"
-        fi
-    done < "$DATA"
+    awk -F: -v col_num="$col_num" -v val="$val" '
+        $col_num == val { print NR ":" $0 }
+    ' "$DATA"
 }
 
 
@@ -39,10 +26,8 @@ display_rows() {
         return 0
     fi
 
-    local headers=()
-    while IFS=: read -r name type; do
-        headers+=("$name")
-    done < "$META"
+    headers=($(cut -d: -f1 "$META"))
+    
 
     printf "%-5s" "Line"
     for h in "${headers[@]}"; do
@@ -69,9 +54,9 @@ display_rows() {
 select_menu() {
     local cols=()
 
-    while IFS=: read -r name type; do
-        cols+=("$name")
-    done < "$META"
+
+    cols=($(cut -d: -f1 "$META"))
+
 
     echo "Select a column :" >&2
     for i in "${!cols[@]}"; do
@@ -98,9 +83,5 @@ select_menu() {
 }
 
 get_all_rows() {
-    local line_no=0
-    while IFS= read -r line; do
-        line_no=$((line_no+1))
-        echo "$line_no:$line"
-    done < "$DATA"
+    awk '{print NR ":" $0}' "$DATA"
 }
