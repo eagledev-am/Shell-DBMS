@@ -31,7 +31,7 @@ introScreen() {
   echo -e "           ${MAGENTA}Manage · Store · Retrieve"
   echo
   echo -e "${BLUE}-----------------------------------------------"
-  echo -e "          Created by: ${RED}freinds"
+  echo -e "          Created by: ${RED}M & A & K & Z"
   echo -e "${BLUE}-----------------------------------------------"
   
 echo -e "${YELLOW}----------------------------------------------------${NC}"
