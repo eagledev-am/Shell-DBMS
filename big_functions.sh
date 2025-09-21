@@ -73,7 +73,7 @@ delete_fn() {
         local line_no="${entry%%:*}"
 
         read -p "Delete this record (line $line_no)? (y/n): " confirm
-        if [[ "$confirm" != "y" ]]; then
+        if [[ "$confirm" != "y" && "$confirm" != "Y" && -n "$confirm" ]]; then
             echo "[INFO] Delete cancelled"
             return 0
         fi
