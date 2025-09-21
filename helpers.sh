@@ -62,6 +62,7 @@ remove_row() {
     echo "[remove_row] Removed line $line_no from $DATA"
 }
 
+
 update_row() {
     local line_num=$1
     local field_num=$2
@@ -70,7 +71,7 @@ update_row() {
 
     awk -F: -v line="$line_num" -v field="$field_num" -v val="$new_val" '
     BEGIN { OFS=FS }
-    NR == line { $field = val }
+        NR == line { $field = val }
     { print }
     ' $DATA > $tmpf && mv $tmpf $DATA
 }

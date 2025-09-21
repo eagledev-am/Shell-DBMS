@@ -1,5 +1,6 @@
 #!/bin/bash
 select_fn() {
+    echo "[INFO] Press Enter to preview all records"
     local menu_result
     menu_result=$(select_menu) || return 1
 
@@ -7,7 +8,12 @@ select_fn() {
     read -r choice col val <<< "$menu_result"
 
     local rows
-    rows=$(select_row "$col" "$val")
+    if [[ "$choice" == "0" ]]; then
+        rows=$(get_all_rows)
+        echo "[INFO] Displaying all records:"
+    else
+        rows=$(select_row "$col" "$val")
+    fi
 
     if [[ -n "$rows" ]]; then
         mapfile -t rows_array <<< "$rows"
@@ -23,6 +29,11 @@ delete_fn() {
 
     local col val choice
     read -r choice col val <<< "$menu_result"
+
+    if [[ "$choice" == "0" ]]; then
+        echo "[ERROR] Cannot delete all records. Please select a specific column and value."
+        return 1
+    fi
 
     local rows
     rows=$(select_row "$col" "$val")
@@ -80,6 +91,11 @@ update_fn() {
     local col val choice
     read -r choice col val <<< "$menu_result"
 
+    if [[ "$choice" == "0" ]]; then
+        echo "[ERROR] Cannot update all records. Please select a specific column and value."
+        return 1
+    fi
+
     local rows
     rows=$(select_row "$col" "$val")
 
@@ -108,6 +124,8 @@ update_fn() {
                 echo "[ERROR] Please enter a line number or 'exit' to cancel."
                 continue
             fi
+
+            break
 
             local found=false
             for entry in "${rows_array[@]}"; do

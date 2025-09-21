@@ -79,6 +79,12 @@ select_menu() {
     done
 
     read -p "Enter choice [1-${#cols[@]}]: " choice >&2
+
+    if [[ -z "$choice" ]]; then
+        echo "0 ALL_ROWS ALL_VALUES"
+        return 0
+    fi
+
     if ! [[ "$choice" =~ ^[0-9]+$ ]] || ((choice < 1 || choice > ${#cols[@]})); then
         echo "[ERROR] Invalid choice" >&2
         return 1
@@ -91,3 +97,10 @@ select_menu() {
     echo "$choice $col $val"
 }
 
+get_all_rows() {
+    local line_no=0
+    while IFS= read -r line; do
+        line_no=$((line_no+1))
+        echo "$line_no:$line"
+    done < "$DATA"
+}
