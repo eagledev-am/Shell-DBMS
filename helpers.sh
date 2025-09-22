@@ -54,7 +54,7 @@ remove_row() {
     fi
 
     sed -i "${line_no}d" "$DATA"
-    echo "[remove_row] Removed line $line_no from $DATA"
+    echo "[remove_row] Removed line $line_no"
 }
 
 

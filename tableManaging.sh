@@ -21,9 +21,7 @@ function add_table() {
 
         
         if [ -f "$WDB/tables/$tableName" ] || [ -f "$WDB/metadata/$tableName.meta" ]; then
-            echo -e "${RED}"
             echo "=====Table already exists.====="
-            echo -e "${CYAN}"
             exit 1
         fi
         
@@ -39,32 +37,23 @@ function add_table() {
             fi
             
             if grep -q "^$colName:" "$WDB/metadata/$tableName.meta"; then
-                echo -e "${RED}"
                 echo "=====$colName column already exists.====="
-                echo -e "${CYAN}"
                 continue
             fi
             
             read -p "Enter data type (str/int): " colType
             if [ "$colType" != "str" ] && [ "$colType" != "int" ]; then
-                echo -e "${RED}"
                 echo "=====Invalid column type. Must be 'str' or 'int'.====="
-                echo -e "${CYAN}"
                 continue
             fi
             
             echo "$colName:$colType" >> "$WDB/metadata/$tableName.meta"
-            echo -e "${GREEN}"
             echo "=====$colName column has been added.====="
-            echo -e "${CYAN}"
             ((counter++))
         done
         
         touch "$WDB/tables/$tableName"
-        
-        echo -e "${GREEN}"
         echo "=====Table '$tableName' created successfully with $col columns====="
-        echo -e "${CYAN}"
         break
     done
 }
@@ -76,9 +65,6 @@ function drop_table() {
         read -p "Enter the name of the table: " tableName
         
         if [ -z "$tableName" ]; then
-            echo -e "${YELLOW}"
-            echo "=====The name of the table can't be empty!====="
-            echo -e "${CYAN}"
             continue
         fi
         
@@ -88,21 +74,14 @@ function drop_table() {
             if [[ $confirm == [Yy] ]]; then
                 rm -r "$WDB/tables/$tableName"
                 rm -r "$WDB/metadata/$tableName.meta"
-                
-                echo -e "${GREEN}"
                 echo "=====$tableName table has been removed====="
-                echo -e "${CYAN}"
                 
             else
-                echo -e "${YELLOW}"
                 echo "=====Cancelled.====="
-                echo -e "${CYAN}"
             fi
             break
         else
-            echo -e "${RED}"
             echo "=====The $tableName table doesn't exist.====="
-            echo -e "${CYAN}"
             continue
         fi
     done
