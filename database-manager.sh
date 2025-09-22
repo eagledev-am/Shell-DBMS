@@ -20,7 +20,7 @@ function isEmpty(){
 function createDB(){
     read -p "Enter the name for new database: " dbname
     if ! isValidDBName "$dbname"; then
-        read -n 1 -s -r -p "✨ Press any key to continue..."
+        read -n 1 -s -r -p "Press any key to continue..."
         return  
     fi
     
@@ -61,7 +61,7 @@ function connectDB(){
     
     read -r -p "Database name to connect: " dbname
     if ! isValidDBName "$dbname"; then
-        read -n 1 -s -r -p "✨ Press any key to continue..."
+        read -n 1 -s -r -p "Press any key to continue..."
         mainMenu
         return
     fi
@@ -72,7 +72,7 @@ function connectDB(){
         echo "=====No such database====="
         echo
         echo -e "${CYAN}"
-        read -n 1 -s -r -p "✨ Press any key to continue..."
+        read -n 1 -s -r -p "Press any key to continue..."
         mainMenu
         return
     fi
