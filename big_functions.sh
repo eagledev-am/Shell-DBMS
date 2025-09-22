@@ -141,7 +141,7 @@ update_fn() {
 
     echo "[INFO] Choose column to update:"
     
-    num_cols=$(awk 'END{print NR}' "$META")
+    num_cols=$(cat "$META" | wc -l)
 
     
     awk -F: '{print NR ". " $1}' "$META"
@@ -285,15 +285,15 @@ insert_fn() {
     done
     
     echo ""
-    echo "New record to be inserted: $row_string"
+    echo "New record to be inserted is: $row_string"
     echo "-------------------------"
     
-    # Confirm
+    # Confirm..
     while true; do
         read -p "Insert this record? (y/n): " confirm
         
         if [[ "$confirm" == "y" || "$confirm" == "Y" || -z "$confirm" ]]; then
-            # Append to data file
+            # Append to the data file
             echo "$row_string" >> "$DATA"
             echo "[INFO] Record inserted successfully!"
             return 0

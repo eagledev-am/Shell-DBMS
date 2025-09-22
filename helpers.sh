@@ -36,12 +36,7 @@ check_type() {
             fi
             ;;
         str)
-            if [[ "$value" =~ ^[A-Za-z]+$ ]]; then
-                return 0  # valid string
-            else
-                echo "[check_type] '$value' is not a valid STR"
-                return 1
-            fi
+            return 0
             ;;
     esac
 }
@@ -73,5 +68,5 @@ update_row() {
     BEGIN { OFS=FS }
         NR == line { $field = val }
     { print }
-    ' $DATA > $tmpf && mv $tmpf $DATA
+    ' "$DATA" > "$tmpf" && mv "$tmpf" "$DATA"
 }
