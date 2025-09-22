@@ -2,7 +2,7 @@
 
 A simple Database Management System (DBMS) implemented using Bash shell scripting. This project provides a Command-Line Interface (CLI) to create, manage, and manipulate databases and tables on the file system.
 
-## 📂 Project Structure
+## Project Structure
 
 The project is organized into several Bash script files, each responsible for specific functionalities:
 
@@ -15,12 +15,13 @@ The project is organized into several Bash script files, each responsible for sp
 - **`big_functions.sh`**: Contains larger, more complex functions used in the DBMS.
 - **`main`**: The entry point of the application, initializing the DBMS.
 
-## 🚀 Features
+## Features
 
 - **Database Operations**:
   - Create a new database.
   - List existing databases.
   - Delete a database.
+  - connect to a database
 
 - **Table Operations**:
   - Create a new table within a database.
@@ -32,15 +33,8 @@ The project is organized into several Bash script files, each responsible for sp
 - **Data Validation**:
   - Enforces data types for each column.
   - Validates primary key uniqueness.
-
-## 🛠️ Prerequisites
-
-Ensure you have the following installed:
-
-- A Unix-like operating system (Linux, macOS, or WSL on Windows).
-- Bash shell (version 4.0 or higher recommended).
-
-## 📥 Installation
+    
+##  Installation
 
 1. Clone the repository:
 
