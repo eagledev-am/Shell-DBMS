@@ -52,35 +52,31 @@ display_rows() {
 
 
 select_menu() {
-    local cols=()
-
-
-    cols=($(cut -d: -f1 "$META"))
-
-
     echo "Select a column :" >&2
-    for i in "${!cols[@]}"; do
-        echo "$((i+1)). ${cols[$i]}" >&2
-    done
 
-    read -p "Enter choice [1-${#cols[@]}]: " choice >&2
+    num_cols=$(cat "$META" | wc -l)
+    awk -F: '{print NR ". " $1}' "$META" >&2
+
+    read -p "Enter choice [1-$num_cols]: " choice >&2
 
     if [[ -z "$choice" ]]; then
         echo "0 ALL_ROWS ALL_VALUES"
         return 0
     fi
 
-    if ! [[ "$choice" =~ ^[0-9]+$ ]] || ((choice < 1 || choice > ${#cols[@]})); then
+    if ! [[ "$choice" =~ ^[0-9]+$ ]] || ((choice < 1 || choice > $num_cols)); then
         echo "[ERROR] Invalid choice" >&2
         return 1
     fi
 
-    local col="${cols[$((choice-1))]}"
+    local col
+    col=$(awk -F: -v n="$choice" 'NR==n {print $1}' "$META")
 
     read -p "Enter value for column '$col': " val >&2
 
     echo "$choice $col $val"
 }
+
 
 get_all_rows() {
     awk '{print NR ":" $0}' "$DATA"

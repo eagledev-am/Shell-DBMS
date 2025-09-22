@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# File paths
+# META="table.meta"
+# DATA="table.data"
 
 check_pk() {
     local value="$1"

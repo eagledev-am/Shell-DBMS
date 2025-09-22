@@ -142,8 +142,6 @@ update_fn() {
     echo "[INFO] Choose column to update:"
     
     num_cols=$(cat "$META" | wc -l)
-
-    
     awk -F: '{print NR ". " $1}' "$META"
 
     
