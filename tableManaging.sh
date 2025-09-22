@@ -32,7 +32,7 @@ function add_table() {
         while (( counter <= col )); do
             read -p "Enter name for column $counter: " colName
             
-            if ! validate_name "$colName" "Column"; then
+            if ! validate_name "$colName"; then
                 continue
             fi
             
